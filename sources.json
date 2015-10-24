@@ -1,0 +1,19 @@
+[
+  {
+    "id":           "elmostrador",
+    "name":         "El Mostrador",
+    "feed-url":     "http://www.elmostrador.cl/claves/nueva-constitucion",
+    "feed-tag":     "section",
+    "feed-keyword": "lo-ultimo",
+    "news-keyword": "col-sm-12"
+
+  },
+  {
+    "id":           "radiouchile",
+    "name":         "Radio Universidad de Chile",
+    "feed-url":     "http://radio.uchile.cl/tag/asamblea-constituyente",
+    "feed-tag":     "div",
+    "feed-keyword": "item-list",
+    "news-keyword": "type-post"
+  }
+]
