@@ -40,6 +40,14 @@ def _get_news_list(feed_url, html_tag, class_keyword):
     href_list = list(set(href_list))
     return href_list
 
+def _post_to_api(api_url, contents):
+    # api_url  --> URL del API.
+    # contents --> diccionario completo de noticias.
+
+    _data = {"contents": json.dumps(contents)}
+    rpost = requests.post(api_url, data=_data)
+    print(rpost)
+
 def build(filename):
     # filename --> nombre del archivo con los *feeds*.
 
@@ -80,5 +88,6 @@ def build(filename):
         # pprint.pprint(source)
 
     pprint.pprint(all_sources)
+    _post_to_api('http://address', all_sources)
 
 build('sources.json')
