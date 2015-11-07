@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import pprint
 import json
 
 def _filter_by_length(tag_content):
@@ -11,25 +12,24 @@ def _filter_by_length(tag_content):
 
     return True
 
-def reader(news_url, class_keyword):
+def _reader(news_url, class_keyword):
     # news_url      --> URL con el cual se obtiene la noticia.
     # class_keyword --> *class-keyword* para ubicar el cuerpo de la noticia.
 
-    r = requests.get(news_url)
-    soup = BeautifulSoup(r.content, 'html.parser')
-    news_body = soup.find('article', class_=class_keyword)
-    content = news_body('p')
-    # input()
-    # print(content)
+    rget = requests.get(news_url)
+    soup = BeautifulSoup(rget.content, 'html.parser')
+    article = soup.find('article', class_=class_keyword)
+    body = [str(paragraph) for paragraph in article('p')]
+    return body
 
-def get_news_list(feed_url, html_tag, class_keyword):
+def _get_news_list(feed_url, html_tag, class_keyword):
     # feed_url      --> URL del *feed*.
     # html_tag      --> etiqueta HTML para ubicar el *feed*.
     # class_keyword --> *class-keyword* para ubicar el *feed*.
 
     # obtiene el *feed*.
-    r = requests.get(feed_url)
-    soup = BeautifulSoup(r.content, 'html.parser')
+    rget = requests.get(feed_url)
+    soup = BeautifulSoup(rget.content, 'html.parser')
     feed = soup.find(html_tag, class_=class_keyword)
 
     # luego, filtra según tamaño del contenido.
@@ -40,30 +40,45 @@ def get_news_list(feed_url, html_tag, class_keyword):
     href_list = list(set(href_list))
     return href_list
 
-def load_sources(filename):
+def build(filename):
     # filename --> nombre del archivo con los *feeds*.
 
+    # #######################################################
+    # Este método busca aprovechar el diccionario subyacente,
+    # que se obtiene a partir del archivo JSON.
+    # Luego, sólo se debe agregar las noticias,
+    # que serían los datos faltantes.
+    # ###############################
+
+    feed_list = []  # lista de *feeds*, o también
+                    # lista de listas de noticias.
     with open(filename) as src_file:
-        sources = json.load(src_file)
-        feed_list = []  # lista de *feeds*, o también
-                        # lista de listas de noticias.
-        for source in sources:
-            # print(source.keys())
-            news_list = get_news_list(source['feed-url'],
-                                 source['feed-tag'],
-                                 source['feed-keyword'])
+        all_sources = json.load(src_file)
 
-            # con esto, fabrica un diccionario.
-            news_dict = {'news-list'    : news_list,
-                         'news-keyword' : source['news-keyword']}
-            feed_list.append(news_dict)
+    for source in all_sources:
+        news_list = _get_news_list(source['feed-url'],
+                                   source['feed-tag'],
+                                   source['feed-keyword'])
+        source['news-list'] = []
+        for news_url in news_list:
+            try:
+                news_dict = {'title': "Título no disponible",
+                             'date' : "",
+                             'link' : news_url,
+                             'body' : _reader(news_url,
+                                              source['news-keyword'])}
+                source['news-list'].append(news_dict)
+                # pprint.pprint(source)
+            except:
+                print("Error.")
 
-    return feed_list
+        # elimina las llaves innecesarias.
+        source.pop('feed-url')
+        source.pop('feed-tag')
+        source.pop('feed-keyword')
+        source.pop('news-keyword')
+        # pprint.pprint(source)
 
-def run():
-    feed_list = load_sources('sources.json')
-    # print(feed_list)
-    for feed in feed_list:
-        for news_url in feed['news-list']:
-            reader(news_url, feed['news-keyword'])
-run()
+    pprint.pprint(all_sources)
+
+build('sources.json')
