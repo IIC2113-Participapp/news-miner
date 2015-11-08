@@ -1,26 +1,33 @@
 from bs4 import BeautifulSoup
 import requests
-import pprint
 import json
+from pprint import pprint
 
-def _filter_by_length(tag_content):
-    # tag_content --> contenido (en *string*) de la etiqueta.
-
-    min_length = 3
-    if tag_content:
-        return len(tag_content) > min_length
-
-    return True
-
-def _reader(news_url, class_keyword):
+def _reader(news_url, title_path, class_keyword):
     # news_url      --> URL con el cual se obtiene la noticia.
+    # title_path    --> camino para ubicar el título de la noticia.
     # class_keyword --> *class-keyword* para ubicar el cuerpo de la noticia.
 
     rget = requests.get(news_url)
     soup = BeautifulSoup(rget.content, 'html.parser')
-    article = soup.find('article', class_=class_keyword)
+
+    # obtiene los valores del *path*.
+    t_helptag = title_path[0]
+    t_keyword = title_path[1]
+    title_tag = title_path[2]
+
+    # obtiene el título.
+    helper = soup.find(t_helptag, class_=t_keyword)
+    title = helper.find(title_tag).string
+    print(title)
+
+    # obtiene el cuerpo de la noticia.
+    article = soup.find('div', class_=class_keyword)
     body = [str(paragraph) for paragraph in article('p')]
-    return body
+    # print(body)
+    # input()
+
+    return {'title': title, 'body': body}
 
 def _get_news_list(feed_url, html_tag, class_keyword):
     # feed_url      --> URL del *feed*.
@@ -30,14 +37,14 @@ def _get_news_list(feed_url, html_tag, class_keyword):
     # obtiene el *feed*.
     rget = requests.get(feed_url)
     soup = BeautifulSoup(rget.content, 'html.parser')
-    feed = soup.find(html_tag, class_=class_keyword)
+    feed = soup.find_all(html_tag, class_=class_keyword)
 
-    # luego, filtra según tamaño del contenido.
-    filt_feed = feed('a', string=_filter_by_length)
-    href_list = [link['href'] for link in filt_feed]
+    # extrae todos los enlaces.
+    href_list = [link.find('a')['href'] for link in feed]
 
     # por último, elimina posibles duplicados.
-    href_list = list(set(href_list))
+    # href_list = list(set(href_list))
+    pprint(href_list)
     return href_list
 
 def _post_to_api(api_url, contents):
@@ -70,13 +77,18 @@ def build(filename):
         source['news-list'] = []
         for news_url in news_list:
             try:
-                news_dict = {'title': "Título no disponible",
+                # lee la noticia.
+                reader = _reader(news_url,
+                                 source['title-path'],
+                                 source['body-keyword'])
+
+                # fabrica el diccionario con la información.
+                news_dict = {'title': reader['title'],
                              'date' : "",
                              'link' : news_url,
-                             'body' : _reader(news_url,
-                                              source['news-keyword'])}
+                             'body' : reader['body']}
                 source['news-list'].append(news_dict)
-                # pprint.pprint(source)
+                # pprint(source)
             except:
                 print("Error.")
 
@@ -84,10 +96,11 @@ def build(filename):
         source.pop('feed-url')
         source.pop('feed-tag')
         source.pop('feed-keyword')
-        source.pop('news-keyword')
-        # pprint.pprint(source)
+        source.pop('body-keyword')
+        source.pop('title-path')
+        # pprint(source)
 
-    pprint.pprint(all_sources)
-    _post_to_api('http://address', all_sources)
+    # pprint(all_sources)
+    # _post_to_api('http://address', all_sources)
 
 build('sources.json')
