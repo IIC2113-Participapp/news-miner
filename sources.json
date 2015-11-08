@@ -16,5 +16,14 @@
     "feed-keyword": "archive-item",
     "body-keyword": "maintext",
     "title-path":   ["header", "article-header", "h1"]
+  },
+  {
+    "npid":         "lupa",
+    "name":         "La Lupa de la Constitución",
+    "feed-url":     "http://www.lalupadelaconstitucion.cl/noticias",
+    "feed-tag":     "h6",
+    "feed-keyword": "news-box-title",
+    "body-keyword": "single-article-text",
+    "title-path":   ["article", "single-article", "h2"]
   }
 ]
