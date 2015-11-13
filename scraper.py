@@ -1,7 +1,10 @@
 from bs4 import BeautifulSoup
 import requests
 import json
+import os
 from pprint import pprint
+
+PAPI_URL = os.environ.get('PAPI_URL') # claro, *PAPI* viene de Participapp API.
 
 def _reader(news_url, title_path, class_keyword):
     # news_url      --> URL con el cual se obtiene la noticia.
@@ -101,6 +104,6 @@ def build(filename):
         # pprint(source)
 
     # pprint(all_sources)
-    # _post_to_api('http://address', all_sources)
+    _post_to_api(PAPI_URL, all_sources)
 
 build('sources.json')
