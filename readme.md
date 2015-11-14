@@ -1,6 +1,10 @@
 
 # :snake: NewsMiner :snake:
 
+[![Code Climate
+](https://codeclimate.com/github/IIC2113-Participapp/news-miner/badges/gpa.svg)
+](https://codeclimate.com/github/IIC2113-Participapp/news-miner)
+
 ## Descripción
 En pocas palabras, este microcomponente realiza una *minería* de noticias a partir diferentes fuentes, para, después, entregarlas a la aplicación principal. Para llevar a cabo su implementación, decidimos seguir el [*__open/closed principle__*](https://en.wikipedia.org/wiki/Open/closed_principle). Nuestra intención es que, al momento de agregar una nueva fuente, el [código](scraper.py) escrito en Python (casi) no sufra modificaciones. Luego, sólo se deberá agregar *metadata* en el [archivo](sources.json) JSON.
 
@@ -31,7 +35,7 @@ Los archivos del repositorio están resumidos en la siguiente tabla.
 | ------------------ | ------------------------------------------------------- |
 | `.gitignore`       | Reglas para que `git` ignore ciertos archivos/carpetas. |
 | `requirements.txt` | Librerías utilizadas por `pip`.                         |
-| `script.py`        | Toda la magia serpentina para obtener noticias.         |
+| `scraper.py`       | Toda la magia serpentina para obtener noticias.         |
 | `sources.json`     | *Metadata* de las fuentes, en formato JSON.             |
 
 ## Manual de estilo
