@@ -2,7 +2,7 @@
 # :snake: NewsMiner :snake:
 
 ## Descripción
-En pocas palabras, este microcomponente realiza una *minería* de noticias a partir diferentes fuentes, para, después, entregarlas a la aplicación principal. Para llevar a cabo su implementación, decidimos seguir el [*__open/closed principle__*](https://en.wikipedia.org/wiki/Open/closed_principle). Nuestra intención es que, al momento de agregar una nueva fuente, el código escrito en Python (casi) no sufra modificaciones. Luego, sólo se deberá agregar *metadata* en el archivo JSON.
+En pocas palabras, este microcomponente realiza una *minería* de noticias a partir diferentes fuentes, para, después, entregarlas a la aplicación principal. Para llevar a cabo su implementación, decidimos seguir el [*__open/closed principle__*](https://en.wikipedia.org/wiki/Open/closed_principle). Nuestra intención es que, al momento de agregar una nueva fuente, el [código](scraper.py) escrito en Python (casi) no sufra modificaciones. Luego, sólo se deberá agregar *metadata* en el [archivo](sources.json) JSON.
 
 ## Herramientas
 [Python] será nuestra principal herramienta de trabajo. :snake:<br>
